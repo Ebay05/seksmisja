@@ -101,24 +101,32 @@ onUnmounted(() => {
           <a href="/rejestracja"><Button label="Zarejestruj się" size="large" /></a>
         </div>
       </div>
+<script setup>
+import heroImg1 from '@/assets/img/hero-img-1.jpg'
+import heroImg2 from '@/assets/img/hero-img-2.jpg'
 
-      <div class="col-6 relative h-full flex align-items-center justify-content-center">
-        <img
-          src="@/assets/img/hero-img-1.jpg"
-          alt="Main Hero"
-          width="300"
-          class="hero-one shadow-4 relative z-1"
-          :style="{ transform: `translateY(${scrollY * -0.4}px)` }"
-        />
+// Twoja logika scrollY...
+</script>
 
-        <img
-          src="@/assets/img/hero-img-2.jpg"
-          alt="Secondary Hero"
-          width="200"
-          class="hero-two absolute top-0 right-0 shadow-6 z-2"
-          :style="{ transform: `translateY(${scrollY * -0.6}px)` }"
-        />
-      </div>
+<template>
+  <div class="col-6 relative h-full flex align-items-center justify-content-center">
+    <img
+      :src="heroImg1" 
+      alt="Main Hero"
+      width="300"
+      class="hero-one shadow-4 relative z-1"
+      :style="{ transform: `translateY(${scrollY * -0.4}px)` }"
+    />
+
+    <img
+      :src="heroImg2"
+      alt="Secondary Hero"
+      width="200"
+      class="hero-two absolute top-0 right-0 shadow-6 z-2"
+      :style="{ transform: `translateY(${scrollY * -0.6}px)` }"
+    />
+  </div>
+</template>
     </div>
   </section>
 
