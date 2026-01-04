@@ -104,7 +104,7 @@ onUnmounted(() => {
 
       <div class="col-6 relative h-full flex align-items-center justify-content-center">
         <img
-          src="/assets/img/hero-img-1.jpg"
+          src="@/assets/img/hero-img-1.jpg"
           alt="Main Hero"
           width="300"
           class="hero-one shadow-4 relative z-1"
@@ -112,7 +112,7 @@ onUnmounted(() => {
         />
 
         <img
-          src="/assets/img/hero-img-2.jpg"
+          src="@/assets/img/hero-img-2.jpg"
           alt="Secondary Hero"
           width="200"
           class="hero-two absolute top-0 right-0 shadow-6 z-2"
