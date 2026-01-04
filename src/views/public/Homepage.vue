@@ -5,6 +5,10 @@ import 'primeicons/primeicons.css'
 import { image } from '@primeuix/themes/aura/chip'
 // import { gsap } from 'gsap'
 
+// Hero Images
+import heroImg1 from '@/assets/img/hero-img-1.jpg'
+import heroImg2 from '@/assets/img/hero-img-2.jpg'
+
 // TAGS
 // Row 1
 const relationshipTags = ref([
