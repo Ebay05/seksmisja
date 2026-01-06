@@ -101,7 +101,7 @@ const verifyOtp = async () => {
     if (error) throw error
 
     if (data.session) {
-      console.log('Verification successful!')
+      await supabase.auth.setSession(data.session)
       router.push('/app/news')
     }
   } catch (error: any) {
