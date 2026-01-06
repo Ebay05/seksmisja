@@ -213,11 +213,11 @@ const loginWithGoogle = async () => {
             id="otp"
             v-model="otpToken"
             class="w-full text-center text-3xl tracking-widest"
-            maxlength="6"
+            maxlength="8"
             autocomplete="one-time-code"
             :disabled="loading"
           />
-          <label for="otp">Kod (6 cyfr)</label>
+          <label for="otp">Kod (8 cyfr)</label>
         </FloatLabel>
 
         <Button
