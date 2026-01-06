@@ -95,7 +95,7 @@ const verifyOtp = async () => {
     const { data, error } = await supabase.auth.verifyOtp({
       email: email.value,
       token: otpToken.value,
-      type: 'signup' // Crucial: must be 'signup' for new registrations
+      type: 'email'
     })
 
     if (error) throw error
