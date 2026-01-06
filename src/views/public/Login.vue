@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { supabase } from '@/supabase' // Ensure the path is correct
+import { supabase } from '@/supabase'
 
 // PrimeVue Imports
 import InputText from 'primevue/inputtext'
@@ -151,17 +151,10 @@ const loginWithGoogle = async () => {
 
     <p>
 
-      Nie masz konta?<a href="/rejestracja" class="font-bold px-1 text-primary">Zarejestruj się</a>
+      Nie masz konta?<a href="rejestracja" class="font-bold px-1 text-primary">Zarejestruj się</a>
 
     </p>
 
   </section>
 
 </template>
-
-
-<style></style>
-
-
-
-to samo z logowaniem

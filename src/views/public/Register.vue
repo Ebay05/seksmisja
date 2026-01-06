@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { supabase } from '@/supabase' // Ensure the path is correct
+import { supabase } from '@/supabase'
 
 // PrimeVue Imports
 import InputText from 'primevue/inputtext'
@@ -189,7 +189,7 @@ const loginWithGoogle = async () => {
 
       Masz już konto?
 
-      <a href="/logowanie" class="font-bold text-primary">Zaloguj się</a>
+      <a href="logowanie" class="font-bold text-primary">Zaloguj się</a>
 
     </p>
 
