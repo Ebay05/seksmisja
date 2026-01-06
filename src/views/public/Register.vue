@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { supabase } from '@/supabase'
+import { supabase } from '@/supabaseConnect'
 
 // PrimeVue Imports
 import InputText from 'primevue/inputtext'
@@ -42,7 +42,6 @@ const register = async () => {
       email: email.value,
       password: password.value,
       options: {
-        // Passing additional data (metadata), e.g., display name
         data: {
           display_name: username.value,
         }
