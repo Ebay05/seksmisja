@@ -83,8 +83,8 @@ const register = async () => {
  * Step 2: Verify the 6-digit OTP code sent to user's email
  */
 const verifyOtp = async () => {
-  if (otpToken.value.length < 6) {
-    errorInfo.value = 'Kod musi mieć 6 cyfr!'
+  if (otpToken.value.length < 8) {
+    errorInfo.value = 'Kod musi mieć 8 cyfr!'
     return
   }
 
