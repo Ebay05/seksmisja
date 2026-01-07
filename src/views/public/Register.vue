@@ -98,15 +98,27 @@ const verifyOtp = async () => {
       type: 'email'
     })
 
-    if (error) throw error
-
-    if (data.session) {
-      await supabase.auth.setSession(data.session)
-      router.push('/app/news')
+    if (error) {
+      if (error.message.includes('session')) {
+         console.warn('Sesja nie została utworzona automatycznie, próbuję przekierować...');
+      } else {
+         throw error
+      }
     }
+
+    console.log('Wynik weryfikacji:', data)
+
+    if (data.user) {
+      console.log('Użytkownik zweryfikowany pomyślnie!')
+
+      setTimeout(() => {
+        router.push('/app/news')
+      }, 100)
+    }
+
   } catch (error: any) {
-    console.error('OTP Error:', error)
-    errorInfo.value = 'Niepoprawny kod lub kod wygasł. Spróbuj ponownie.'
+    console.error('Błąd OTP:', error)
+    errorInfo.value = 'Błąd: ' + (error.message || 'Niepoprawny kod')
   } finally {
     loading.value = false
   }
