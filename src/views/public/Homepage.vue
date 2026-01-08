@@ -1,9 +1,7 @@
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import { Button } from 'primevue'
 import 'primeicons/primeicons.css'
 import { Button } from '@/components/ui/button'
-// import { gsap } from 'gsap'
 
 // Hero Images
 import heroImg1 from '@/assets/img/hero-img-1.jpg'
