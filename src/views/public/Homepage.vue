@@ -2,7 +2,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { Button } from 'primevue'
 import 'primeicons/primeicons.css'
-import { image } from '@primeuix/themes/aura/chip'
+import { Button } from '@/components/ui/button'
 // import { gsap } from 'gsap'
 
 // Hero Images
@@ -33,52 +33,49 @@ const communicationTags = ref([
 // FEATURES
 const features = [
   {
-    icon: 'lock', // Ikona Kłódki
+    icon: 'lock',
     title: 'Bezpieczeństwo',
     description:
       'Chronimy Twoje dane, zdjęcia i filmy – Twój content jest zawsze pod pełną kontrolą. Twoja prywatność to nasz priorytet numer jeden.',
   },
   {
-    icon: 'user-check', // Ikona Użytkownika + Check
+    icon: 'user-check',
     title: 'Autoryzacja Profili',
     description:
       'Każdy użytkownik przechodzi proces weryfikacji tożsamości, byś miał absolutną pewność, że rozmawiasz z prawdziwą osobą. Koniec z botami i fałszywymi kontami.',
   },
   {
-    icon: 'palette', // Ikona Palety
+    icon: 'palette',
     title: 'Przejrzysty Wygląd',
     description:
       'Intuicyjny interfejs i nowoczesny design, dzięki którym korzystanie z Nearby to czysta przyjemność. Skup się na rozmowie, a nie na nawigacji.',
   },
   {
-    icon: 'gift', // Ikona Prezentu
+    icon: 'gift',
     title: 'Wiele Darmowych Funkcji',
     description:
       'Najważniejsze opcje – przeglądanie profili, wyszukiwanie i czat – dostępne są bez opłat. Zaczynasz od razu, bez konieczności płacenia za podstawy.',
   },
   {
-    icon: 'wallet', // Ikona Portfela
+    icon: 'wallet',
     title: 'Przystępne Premium',
     description:
       'Rozszerz możliwości aplikacji za uczciwą cenę. Dostęp do ekskluzywnych funkcji bez ukrytych kosztów i subskrypcyjnych pułapek. Płacisz za to, co dostajesz.',
   },
   {
-    icon: 'star', // Ikona Gwiazdy/Dopasowania
+    icon: 'star',
     title: 'Inteligentne Dopasowania',
     description:
       'Nasz zaawansowany algorytm analizuje Twoje preferencje i aktywność, by łączyć Cię z naprawdę kompatybilnymi osobami w Twojej okolicy. Oszczędzamy Twój czas!',
   },
 ]
 
-// 1. Zmienna reaktywna przechowująca pozycję scrolla
 const scrollY = ref(0)
 
-// 2. Funkcja aktualizująca pozycję
 const handleScroll = () => {
   scrollY.value = window.scrollY
 }
 
-// 3. Dodanie i usunięcie nasłuchiwania (event listenera)
 onMounted(() => {
   window.addEventListener('scroll', handleScroll)
 })
@@ -100,6 +97,12 @@ onUnmounted(() => {
             bezpieczeństwo i dyskrecja spotykają się z autentycznym pragnieniem bliskości. Dołącz do
             społeczności, która wie, czego chce, i spotykaj osoby, które naprawdę istnieją.
           </p>
+
+
+
+    <Button>Click me</Button>
+
+
         </div>
         <div>
           <a href="/rejestracja"><Button label="Zarejestruj się" size="large" /></a>
@@ -109,13 +112,12 @@ onUnmounted(() => {
 import heroImg1 from '@/assets/img/hero-img-1.jpg'
 import heroImg2 from '@/assets/img/hero-img-2.jpg'
 
-// Twoja logika scrollY...
 </script>
 
 <template>
   <div class="col-6 relative h-full flex align-items-center justify-content-center">
     <img
-      :src="heroImg1" 
+      :src="heroImg1"
       alt="Main Hero"
       width="300"
       class="hero-one shadow-4 relative z-1"
