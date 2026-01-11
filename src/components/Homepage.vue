@@ -39,16 +39,15 @@ const submitToSupabase = async () => {
   }
 
   // Supabase Auth Registration
-  const { data, error } = await supabase.auth.signUp({
-    email: email.value,
-    password: password.value,
-    options: {
-      data: {
-        display_name: username.value,
-      }
+const { error } = await supabase.auth.signUp({
+  email: email.value,
+  password: password.value,
+  options: {
+    data: {
+      display_name: username.value,
     }
-  })
-
+  }
+})
   if (error) {
     alert("Błąd: " + error.message)
   } else {
