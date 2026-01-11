@@ -12,7 +12,6 @@ const username = ref('')
 const password = ref('')
 const confirmPass = ref('')
 const isLoading = ref(false)
-const isConfirming = ref(false)
 const otpCode = ref('')
 
 // FIRST REGISTER INPUT
