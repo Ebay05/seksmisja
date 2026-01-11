@@ -5,37 +5,41 @@ import { ref } from 'vue'
 import { supabase } from '@/lib/supabaseClient'
 
 const isRegisterVisible = ref(false)
+const currentStep = ref('home')
 
 const email = ref('')
 const username = ref('')
 const password = ref('')
 const confirmPass = ref('')
 const isLoading = ref(false)
+const isConfirming = ref(false)
+const otpCode = ref('')
 
 // FIRST REGISTER INPUT
 const handleRegister = () => {
-  isLoading.value = false
-
   if (email.value.trim() !== '' && email.value.includes('@')) {
-    isRegisterVisible.value = true
+    currentStep.value = 'register'
   } else {
     alert('Proszę podać prawidłowy adres e-mail.')
   }
 }
 
 // TO DATABASE
-// TO DATABASE
 const submitToSupabase = async () => {
   // Pass Validation
   const usernameRegex = /^(?=[^0-9])(?=(.*[a-zA-Z]){3,})[a-zA-Z0-9_ ]+$/
-  const strongPasswordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/
 
-  if (
-    !usernameRegex.test(username.value) ||
-    !strongPasswordRegex.test(password.value) ||
-    password.value !== confirmPass.value
-  ) {
-    alert('Proszę spełnić wszystkie wymagania formularza.')
+  const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/
+
+  if (!usernameRegex.test(username.value)) {
+    return
+  }
+
+  if (!strongPasswordRegex.test(password.value)) {
+    return
+  }
+
+  if (password.value !== confirmPass.value) {
     return
   }
 
@@ -65,13 +69,37 @@ const submitToSupabase = async () => {
       },
     },
   })
+
   if (error) {
     alert('Błąd: ' + error.message)
     isLoading.value = false
   } else {
-    alert('Rejestracja pomyślna! Sprawdź maila lub zaloguj się.')
-    isRegisterVisible.value = false // Back to homepage
+    // Switch to OTP step after successful registration
+    currentStep.value = 'otp'
     isLoading.value = false
+  }
+
+  isLoading.value = false
+}
+
+// Function to verify the 8-digit OTP code
+const verifyOtp = async () => {
+  if (otpCode.value.length < 8) return
+
+  isLoading.value = true
+
+  // Supabase OTP Verification
+  const { error } = await supabase.auth.verifyOtp({
+    email: email.value,
+    token: otpCode.value,
+    type: 'signup',
+  })
+
+  if (error) {
+    alert('Błąd weryfikacji: ' + error.message)
+  } else {
+    alert('Konto zweryfikowane pomyślnie!')
+    currentStep.value = 'home'
   }
 
   isLoading.value = false
@@ -89,7 +117,7 @@ const submitToSupabase = async () => {
   </nav>
 
   <Transition name="fade" mode="out-in">
-    <div v-if="!isRegisterVisible" key="home">
+    <div v-if="currentStep === 'home'" key="home">
       <div
         v-if="!isRegisterVisible"
         class="flex w-full flex-1 flex-col items-center justify-center px-12 py-10 text-center"
@@ -153,7 +181,7 @@ const submitToSupabase = async () => {
         </div>
       </div>
     </div>
-    <div v-else key="register">
+    <div v-else-if="currentStep === 'register'" key="register">
       <!-- REGISTER SECTION -->
       <div
         v-if="isRegisterVisible"
@@ -204,24 +232,43 @@ const submitToSupabase = async () => {
               </li>
             </ul>
           </div>
-
           <div class="w-full text-left">
             <Input v-model="password" type="password" placeholder="Stwórz hasło" class="h-10" />
-            <ul class="mt-2 ml-1 space-y-1 text-[11px]">
-              <li :class="password.length >= 8 ? 'text-green-500' : 'text-muted-foreground'">
-                • Minimum 8 znaków
+
+            <ul class="mt-2 ml-1 space-y-1 text-[11px] transition-all">
+              <li
+                :class="
+                  password.length >= 8 ? 'font-medium text-green-500' : 'text-muted-foreground'
+                "
+              >
+                {{ password.length >= 8 ? '✓' : '•' }} Minimum 8 znaków
               </li>
-              <li :class="/\d/.test(password) ? 'text-green-500' : 'text-muted-foreground'">
-                • Przynajmniej jedna cyfra
+              <li
+                :class="
+                  /[a-z]/.test(password) && /[A-Z]/.test(password)
+                    ? 'font-medium text-green-500'
+                    : 'text-muted-foreground'
+                "
+              >
+                {{ /[a-z]/.test(password) && /[A-Z]/.test(password) ? '✓' : '•' }} Małe i wielkie
+                litery
+              </li>
+              <li
+                :class="
+                  /\d/.test(password) ? 'font-medium text-green-500' : 'text-muted-foreground'
+                "
+              >
+                {{ /\d/.test(password) ? '✓' : '•' }} Przynajmniej jedna cyfra
               </li>
               <li
                 :class="
                   /[!@#$%^&*(),.?&quot;:{}|<>]/.test(password)
-                    ? 'text-green-500'
+                    ? 'font-medium text-green-500'
                     : 'text-muted-foreground'
                 "
               >
-                • Przynajmniej jeden znak specjalny
+                {{ /[!@#$%^&*(),.?&quot;:{}|<>]/.test(password) ? '✓' : '•' }} Znak specjalny (np.
+                !, @, #, $)
               </li>
             </ul>
           </div>
@@ -230,9 +277,15 @@ const submitToSupabase = async () => {
             <Input v-model="confirmPass" type="password" placeholder="Powtórz hasło" class="h-10" />
             <p
               v-if="confirmPass && password !== confirmPass"
-              class="mt-1 ml-1 text-[11px] text-red-500"
+              class="mt-1 ml-1 animate-pulse text-[11px] text-red-500"
             >
-              Hasła muszą być identyczne
+              Hasła nie są identyczne
+            </p>
+            <p
+              v-if="confirmPass && password === confirmPass && password.length > 0"
+              class="mt-1 ml-1 text-[11px] text-green-500"
+            >
+              ✓ Hasła są identyczne
             </p>
           </div>
 
@@ -246,6 +299,43 @@ const submitToSupabase = async () => {
             {{ isLoading ? 'Tworzenie konta...' : 'Zarejestruj' }}
           </Button>
         </div>
+      </div>
+    </div>
+
+    <div
+      v-else-if="currentStep === 'otp'"
+      key="otp"
+      class="flex w-full flex-1 flex-col items-center justify-center px-12 py-10 text-center"
+    >
+      <h2 class="mb-6 text-6xl font-extrabold tracking-wide lg:text-7xl">Weryfikacja</h2>
+      <p class="text-muted-foreground mx-auto mb-10 max-w-[600px] text-xl">
+        Wysłaliśmy 8-cyfrowy kod na adres <br />
+        <span class="text-primary font-bold">{{ email }}</span>
+      </p>
+
+      <div class="mx-auto flex w-full max-w-md flex-col items-center gap-5">
+        <Input
+          v-model="otpCode"
+          type="text"
+          maxlength="8"
+          placeholder="00000000"
+          class="h-12 text-center font-mono text-2xl tracking-[0.5em]"
+        />
+
+        <Button
+          class="w-full bg-rose-950 text-rose-500 hover:text-white"
+          @click="verifyOtp"
+          :disabled="isLoading || otpCode.length < 8"
+        >
+          {{ isLoading ? 'Weryfikacja...' : 'Potwierdź kod' }}
+        </Button>
+
+        <button
+          @click="currentStep = 'register'"
+          class="text-muted-foreground text-sm hover:underline"
+        >
+          Wróć do poprawy danych
+        </button>
       </div>
     </div>
   </Transition>
