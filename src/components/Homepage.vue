@@ -55,16 +55,6 @@ const submitToSupabase = async () => {
     return
   }
 
-  const strongPasswordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/
-
-  if (!strongPasswordRegex.test(password.value)) {
-    alert(
-      'Hasło jest za słabe! Musi mieć min. 8 znaków, zawierać literę, cyfrę oraz znak specjalny.',
-    )
-    isLoading.value = false
-    return
-  }
-
   // Supabase Auth Registration
   const { error } = await supabase.auth.signUp({
     email: email.value,
