@@ -30,7 +30,7 @@ const router = createRouter({
 })
 
 // NAVIGATION GUARD
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, _from, next) => {
   // Get current session from Supabase
   const {
     data: { session },
