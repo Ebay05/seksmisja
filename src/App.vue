@@ -1,13 +1,9 @@
-<script setup lang="ts">
-
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <div class="h-screen flex flex-col">
+  <div class="flex h-screen flex-col">
     <RouterView />
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

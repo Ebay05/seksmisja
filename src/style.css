@@ -1,10 +1,10 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 @custom-variant dark (&:is(.dark *));
 
 :root {
   /* CZCIONKA */
-  --font-sans: 'Questrial', 'Poppins', Helvetica,sans-serif;
+  --font-sans: 'Questrial', 'Poppins', Helvetica, sans-serif;
 
   /* ZMIENNE KOLORÓW (Light Mode) */
   --background: oklch(1 0 0);
@@ -65,7 +65,7 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -76,13 +76,18 @@
   * {
     @apply border-border outline-ring/50;
   }
-  
+
   body {
     /* To wymusza czcionkę i poprawny układ Flex na całej stronie */
-    @apply bg-background text-foreground font-sans antialiased min-h-screen flex flex-col m-0;
+    @apply bg-background text-foreground m-0 flex min-h-screen flex-col font-sans antialiased;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply tracking-tight;
   }
 }
@@ -97,10 +102,10 @@ a {
   * {
     @apply border-border outline-ring/50;
     /* To wymusi czcionkę na KAŻDYM elemencie, jeśli nic innego nie działa */
-    font-family: "Questrial", "Poppins", Arial, Helvetica, sans-serif !important;
+    font-family: 'Questrial', 'Poppins', Arial, Helvetica, sans-serif !important;
   }
-  
+
   body {
-    @apply bg-background text-foreground antialiased min-h-screen flex flex-col m-0;
+    @apply bg-background text-foreground m-0 flex min-h-screen flex-col antialiased;
   }
 }
