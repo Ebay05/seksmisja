@@ -21,14 +21,10 @@ import { ref, onMounted, computed } from 'vue'
 import { supabase } from '@/lib/supabaseClient'
 import { useRouter, useRoute } from 'vue-router'
 
-// Importy obrazków
-import maleAvatar from '@/assets/default_male_avatar.jpg'
-import femaleAvatar from '@/assets/default_female_avatar.jpg'
-
 const router = useRouter()
 const route = useRoute()
 
-// Zunifikowana lista elementów menu
+// Sidebar Sections
 const items = [
   { title: 'Społeczność', path: '/app/community', icon: Users },
   { title: 'Czat', path: '/app/chat', icon: MessageCircleMore },
@@ -40,16 +36,10 @@ const items = [
 const userProfile = ref<{
   username: string
   email: string
-  gender: string
+  sex: string
   avatar_url: string
+  role: string
 } | null>(null)
-
-const avatarSrc = computed(() => {
-  if (userProfile.value?.avatar_url) return userProfile.value.avatar_url
-  if (userProfile.value?.gender === 'M') return maleAvatar
-  if (userProfile.value?.gender === 'K') return femaleAvatar
-  return maleAvatar
-})
 
 const handleLogout = async () => {
   await supabase.auth.signOut()
@@ -126,18 +116,23 @@ onMounted(async () => {
         <SidebarMenu>
           <SidebarMenuItem>
             <div class="flex items-center gap-3 px-2 py-1.5">
-              <Avatar class="h-9 w-9 border">
-                <AvatarImage :src="avatarSrc" alt="Avatar" />
-                <AvatarFallback class="bg-rose-950 text-rose-500">
-                  {{ userProfile?.username?.charAt(0).toUpperCase() || 'U' }}
+              <Avatar class="h-9 w-9 border border-white/10">
+                <AvatarImage
+                  v-if="userProfile?.avatar_url"
+                  :src="userProfile.avatar_url"
+                  :alt="userProfile.username"
+                />
+
+                <AvatarFallback class="bg-rose-950 font-bold text-rose-500">
+                  {{ userProfile?.username ? userProfile.username.charAt(0).toUpperCase() : '?' }}
                 </AvatarFallback>
               </Avatar>
 
               <div class="flex flex-col items-start overflow-hidden">
-                <span class="truncate text-sm font-semibold">
+                <span class="truncate text-sm font-semibold text-white">
                   {{ userProfile?.username || 'Ładowanie...' }}
                 </span>
-                <span class="text-muted-foreground truncate text-xs">
+                <span class="truncate text-xs text-gray-400 capitalize">
                   {{ userProfile?.role }}
                 </span>
               </div>

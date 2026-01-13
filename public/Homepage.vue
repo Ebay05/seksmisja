@@ -4,6 +4,9 @@ import { Input } from "@/components/ui/input";
 import { ref } from "vue";
 import { supabase } from "@/lib/supabaseClient";
 
+import maleAvatar from "@/assets/default_male_avatar.jpg";
+import femaleAvatar from "@/assets/default_female_avatar.jpg";
+
 const isRegisterVisible = ref(false);
 const currentStep = ref("home");
 
@@ -11,6 +14,7 @@ const email = ref("");
 const username = ref("");
 const password = ref("");
 const confirmPass = ref("");
+const sex = ref("M");
 const isLoading = ref(false);
 const otpCode = ref("");
 
@@ -21,6 +25,14 @@ const handleRegister = () => {
   } else {
     alert("Proszę podać prawidłowy adres e-mail.");
   }
+};
+
+// FETCHING AVATAR URL
+const getAvatarUrl = () => {
+  if (sex.value === "K") {
+    return femaleAvatar;
+  }
+  return maleAvatar;
 };
 
 // TO DATABASE
@@ -66,6 +78,8 @@ const submitToSupabase = async () => {
     options: {
       data: {
         username: username.value,
+        sex: sex.value,
+        avatar_url: getAvatarUrl(),
       },
     },
   });
@@ -337,6 +351,49 @@ const verifyOtp = async () => {
             >
               ✓ Hasła są identyczne
             </p>
+          </div>
+
+          <div class="w-full text-left">
+            <span class="mb-2 ml-1 block text-xs font-medium text-gray-400">
+              Płeć
+            </span>
+            <div class="flex items-center gap-6 px-1">
+              <label
+                class="flex cursor-pointer items-center gap-2 text-sm text-gray-300 hover:text-white transition-colors"
+              >
+                <input
+                  type="radio"
+                  value="M"
+                  v-model="sex"
+                  class="h-4 w-4 border-gray-600 bg-zinc-800 text-rose-500 focus:ring-rose-500/50 accent-rose-500"
+                />
+                Mężczyzna
+              </label>
+
+              <label
+                class="flex cursor-pointer items-center gap-2 text-sm text-gray-300 hover:text-white transition-colors"
+              >
+                <input
+                  type="radio"
+                  value="K"
+                  v-model="sex"
+                  class="h-4 w-4 border-gray-600 bg-zinc-800 text-rose-500 focus:ring-rose-500/50 accent-rose-500"
+                />
+                Kobieta
+              </label>
+
+              <label
+                class="flex cursor-pointer items-center gap-2 text-sm text-gray-300 hover:text-white transition-colors"
+              >
+                <input
+                  type="radio"
+                  value="I"
+                  v-model="sex"
+                  class="h-4 w-4 border-gray-600 bg-zinc-800 text-rose-500 focus:ring-rose-500/50 accent-rose-500"
+                />
+                Inna
+              </label>
+            </div>
           </div>
 
           <Button

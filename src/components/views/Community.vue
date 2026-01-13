@@ -41,7 +41,7 @@ const fetchProfile = async () => {
   }
 }
 
-import { ImagePlus, Video, SmilePlus } from 'lucide-vue-next'
+import { ImagePlus, Video, SmilePlus, Send } from 'lucide-vue-next'
 
 const actions = [
   { title: 'Dodaj zdjęcie', icon: ImagePlus, type: 'image' },
@@ -72,6 +72,9 @@ onMounted(() => {
         <TabsContent value="news" class="mt-0 w-3/4">
           <h2 class="mb-6 text-2xl font-bold text-white">Aktualności</h2>
 
+          <!-- ----------------------------------------------------- -->
+          <!-- ---------------------ADDING POST--------------------- -->
+          <!-- ----------------------------------------------------- -->
           <div class="flex flex-col gap-4">
             <Card class="border-white/10 bg-zinc-800/20">
               <CardContent class="flex items-center gap-4">
@@ -86,6 +89,8 @@ onMounted(() => {
                   placeholder="O czym teraz myślisz?"
                   class="h-12 min-h-[48px] flex-1 resize-none overflow-hidden rounded-xl bg-white/5 px-4 py-3 text-sm text-white placeholder:text-gray-500 focus:ring-1 focus:ring-rose-500/50 focus:outline-none"
                 ></textarea>
+
+                <Button variant="icon" icon=""></Button>
 
                 <div class="flex shrink-0 items-center gap-3 px-2">
                   <button
