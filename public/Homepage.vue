@@ -206,7 +206,8 @@ const resendOtp = async () => {
     alert("Nowy kod został wysłany!");
     startCooldown();
 
-  isLoading.value = false;
+    isLoading.value = false;
+  }
 };
 </script>
 
