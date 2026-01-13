@@ -1,23 +1,17 @@
 <script setup lang="ts">
-// Importujemy podstawowe komponenty Tabs z Twojej biblioteki UI
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 
 import { ref, onMounted } from 'vue'
-
 import { supabase } from '@/lib/supabaseClient'
 
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarImage } from '@/components/ui/avatar'
 
-const userProfile = ref<{ avatar_url: string } | null>(null)
+const userProfile = ref<{
+  avatar_url: string
+  username: string
+} | null>(null)
 
 const fetchProfile = async () => {
   const {
@@ -26,13 +20,9 @@ const fetchProfile = async () => {
 
   if (user) {
     const { data, error } = await supabase
-
       .from('profiles')
-
       .select('avatar_url, username')
-
       .eq('id', user.id)
-
       .single()
 
     if (!error) {
@@ -41,13 +31,11 @@ const fetchProfile = async () => {
   }
 }
 
-import { ImagePlus, Video, SmilePlus, Send } from 'lucide-vue-next'
+import { ImagePlus, Video, SmilePlus } from 'lucide-vue-next'
 
 const actions = [
   { title: 'Dodaj zdjęcie', icon: ImagePlus, type: 'image' },
-
   { title: 'Dodaj wideo', icon: Video, type: 'video' },
-
   { title: 'Dodaj emoji', icon: SmilePlus, type: 'emoji' },
 ]
 
@@ -79,10 +67,10 @@ onMounted(() => {
             <Card class="border-white/10 bg-zinc-800/20">
               <CardContent class="flex items-center gap-4">
                 <Avatar class="h-12 w-12 shrink-0 border-2 border-rose-500/50 shadow-lg">
-                  <AvatarImage :src="userProfile?.avatar_url" alt="Avatar" />
-                  <AvatarFallback class="bg-rose-950 text-rose-500">U</AvatarFallback>
+                  <AvatarImage :src="userProfile?.avatar_url as string" alt="Avatar" />
                 </Avatar>
 
+                <!-- Post Message -->
                 <textarea
                   name="newPost"
                   id="newPost"
@@ -90,8 +78,15 @@ onMounted(() => {
                   class="h-12 min-h-[48px] flex-1 resize-none overflow-hidden rounded-xl bg-white/5 px-4 py-3 text-sm text-white placeholder:text-gray-500 focus:ring-1 focus:ring-rose-500/50 focus:outline-none"
                 ></textarea>
 
-                <Button variant="icon" icon=""></Button>
+                <!-- Send Icon -->
+                <button
+                  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rose-500 text-white shadow-lg transition-all hover:scale-105 hover:bg-rose-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                  title="Opublikuj"
+                >
+                  <Send :size="18" />
+                </button>
 
+                <!-- Additional Actions -->
                 <div class="flex shrink-0 items-center gap-3 px-2">
                   <button
                     v-for="action in actions"

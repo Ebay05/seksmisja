@@ -16,7 +16,7 @@ import {
 import { Button } from '@/components/ui/button' // DODANO IMPORT
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { MessageCircleMore, HeartPlus, Library, Gem, Users, LogOut } from 'lucide-vue-next'
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { supabase } from '@/lib/supabaseClient'
 import { useRouter, useRoute } from 'vue-router'
 
