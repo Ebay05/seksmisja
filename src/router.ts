@@ -25,13 +25,33 @@ const router = createRouter({
       path: '/app',
       component: AppFrame,
       meta: { requiresAuth: true },
-      redirect: '/app/community',
+      redirect: '/app/community', // Tutaj przekierowujesz po ścieżce (to jest ok)
       children: [
-        { path: 'community', component: () => import('@/components/views/Community.vue') },
-        { path: 'chat', component: () => import('@/components/views/Chat.vue') },
-        { path: 'likes', component: () => import('@/components/views/Likes.vue') },
-        { path: 'forum', component: () => import('@/components/views/Forum.vue') },
-        { path: 'premium', component: () => import('@/components/views/Premium.vue') },
+        {
+          path: 'community',
+          name: 'community', // DODAJ TO
+          component: () => import('@/components/views/Community.vue'),
+        },
+        {
+          path: 'chat',
+          name: 'chat', // DODAJ TO
+          component: () => import('@/components/views/Chat.vue'),
+        },
+        {
+          path: 'likes',
+          name: 'likes', // DODAJ TO
+          component: () => import('@/components/views/Likes.vue'),
+        },
+        {
+          path: 'forum',
+          name: 'forum', // DODAJ TO
+          component: () => import('@/components/views/Forum.vue'),
+        },
+        {
+          path: 'premium',
+          name: 'premium', // DODAJ TO
+          component: () => import('@/components/views/Premium.vue'),
+        },
       ],
     },
   ],

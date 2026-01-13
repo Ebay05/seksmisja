@@ -1,8 +1,15 @@
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { supabase } from "@/lib/supabaseClient";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Info, Eye, EyeOff } from "lucide-vue-next";
 
 import maleAvatar from "@/assets/default_male_avatar.jpg";
 import femaleAvatar from "@/assets/default_female_avatar.jpg";
@@ -14,7 +21,12 @@ const email = ref("");
 const username = ref("");
 const password = ref("");
 const confirmPass = ref("");
+const isPasswordVisible = ref(false);
+const isConfirmVisible = ref(false);
 const sex = ref("M");
+const birth_date = ref("");
+const city = ref("");
+const role = ref("Vanilla");
 const isLoading = ref(false);
 const otpCode = ref("");
 
@@ -35,6 +47,29 @@ const getAvatarUrl = () => {
   return maleAvatar;
 };
 
+// ADULT VALIDATION
+const isAdult = computed(() => {
+  if (!birth_date.value) return false;
+
+  const today = new Date();
+  const birth = new Date(birth_date.value);
+
+  const ageLimit = new Date(
+    today.getFullYear() - 18,
+    today.getMonth(),
+    today.getDate()
+  );
+
+  return birth <= ageLimit;
+});
+
+// CITY VALIDATION
+const isCityValid = computed(() => {
+  if (!city.value) return false;
+  const cityRegex = /^[a-zA-ZĄ-ż\s]+$/;
+  return cityRegex.test(city.value.trim());
+});
+
 // TO DATABASE
 const submitToSupabase = async () => {
   // Pass Validation
@@ -52,6 +87,16 @@ const submitToSupabase = async () => {
   }
 
   if (password.value !== confirmPass.value) {
+    return;
+  }
+
+  if (!isAdult.value) {
+    alert("Rejestracja dozwolona tylko dla osób pełnoletnich.");
+    return;
+  }
+
+  if (!isCityValid.value) {
+    alert("Wprowadź poprawną nazwę miasta.");
     return;
   }
 
@@ -79,7 +124,10 @@ const submitToSupabase = async () => {
       data: {
         username: username.value,
         sex: sex.value,
+        city: city.value,
+        birth_date: birth_date.value,
         avatar_url: getAvatarUrl(),
+        role: role.value,
       },
     },
   });
@@ -115,6 +163,48 @@ const verifyOtp = async () => {
     alert("Konto zweryfikowane pomyślnie!");
     currentStep.value = "home";
   }
+
+  isLoading.value = false;
+};
+
+// RESEND OTP
+const cooldownSeconds = ref(0);
+const cooldownInterval = ref<ReturnType<typeof setInterval> | null>(null);
+
+const formattedCooldown = computed(() => {
+  const m = Math.floor(cooldownSeconds.value / 60);
+  const s = cooldownSeconds.value % 60;
+  return `${m}:${s.toString().padStart(2, "0")}`;
+});
+
+const startCooldown = () => {
+  cooldownSeconds.value = 300; // 5 minutes
+  if (cooldownInterval.value) clearInterval(cooldownInterval.value);
+
+  cooldownInterval.value = setInterval(() => {
+    if (cooldownSeconds.value > 0) {
+      cooldownSeconds.value--;
+    } else {
+      if (cooldownInterval.value) clearInterval(cooldownInterval.value);
+    }
+  }, 1000);
+};
+
+const resendOtp = async () => {
+  if (cooldownSeconds.value > 0 || isLoading.value) return;
+
+  isLoading.value = true;
+
+  const { error } = await supabase.auth.resend({
+    type: "signup",
+    email: email.value,
+  });
+
+  if (error) {
+    alert("Błąd: " + error.message);
+  } else {
+    alert("Nowy kod został wysłany!");
+    startCooldown();
 
   isLoading.value = false;
 };
@@ -180,7 +270,6 @@ const verifyOtp = async () => {
               width="32px"
               height="32px"
             />
-            <!-- <h3 class="mb-2 font-bold text-lg">Bez limitów</h3> -->
             <p class="text-md text-muted-foreground pt-4">
               Korzystanie z portalu jest całkowicie bezpłatne i nie nakładamy
               żadnych limitów na liczbę wiadomości.
@@ -196,7 +285,6 @@ const verifyOtp = async () => {
               width="32px"
               height="32px"
             />
-            <!-- <h3 class="mb-2 font-bold text-lg">Pełna prywatność</h3> -->
             <p class="text-md text-muted-foreground pt-4">
               Chronimy Twoje dane, zdjęcia i filmy – Twój content jest zawsze
               pod pełną kontrolą. Twoja prywatność to nasz priorytet.
@@ -212,7 +300,6 @@ const verifyOtp = async () => {
               width="32px"
               height="32px"
             />
-            <!-- <h3 class="mb-2 font-bold text-lg">Intuicyjny UI</h3> -->
             <p class="text-md text-muted-foreground pt-4">
               Doskonalimy interfejs użytkownika tak, aby był nie tylko
               przejrzysty, ale i intuicyjny w obsłudze.
@@ -233,15 +320,25 @@ const verifyOtp = async () => {
           Jeden krok dzieli cię od niezwykłej przygody
         </p>
 
+        <!-- Email Input -->
         <div class="mx-auto flex w-full max-w-md flex-col items-center gap-5">
-          <Input
-            v-model="email"
-            type="email"
-            placeholder="Wpisz email"
-            class="h-10"
-          />
-
           <div class="w-full text-left">
+            <label class="mb-1 ml-1 block text-[11px] text-gray-400"
+              >Email</label
+            >
+            <Input
+              v-model="email"
+              type="email"
+              placeholder="Wpisz email"
+              class="h-10"
+            />
+          </div>
+
+          <!-- Username Input -->
+          <div class="w-full text-left">
+            <label class="mb-1 ml-1 block text-[11px] text-gray-400"
+              >Nazwa użytkownika</label
+            >
             <Input
               v-model="username"
               type="text"
@@ -278,65 +375,86 @@ const verifyOtp = async () => {
               </li>
             </ul>
           </div>
-          <div class="w-full text-left">
-            <Input
-              v-model="password"
-              type="password"
-              placeholder="Stwórz hasło"
-              class="h-10"
-            />
 
-            <ul class="mt-2 ml-1 space-y-1 text-[11px] transition-all">
-              <li
-                :class="
-                  password.length >= 8
-                    ? 'font-medium text-green-500'
-                    : 'text-muted-foreground'
-                "
+          <!-- Password Input -->
+
+          <div class="w-full text-left">
+            <div class="flex items-center justify-between mb-1 ml-1 pr-1">
+              <label class="text-[11px] text-gray-400">Hasło</label>
+
+              <TooltipProvider :delayDuration="200">
+                <Tooltip>
+                  <TooltipTrigger as-child>
+                    <Info
+                      :size="14"
+                      class="text-rose-500 cursor-help opacity-70 hover:opacity-100 transition-opacity"
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="top"
+                    align="end"
+                    class="max-w-[280px] border-white/10 bg-zinc-900 p-3 text-xs leading-relaxed text-gray-200 shadow-2xl"
+                  >
+                    <p>
+                      <strong class="text-rose-500 block mb-1"
+                        >Jak tworzyć silne hasła?</strong
+                      >
+                      Aby stworzyć silne i łatwe do zapamiętania hasło, wybierz
+                      sobie wyraz np.
+                      <span class="italic text-white">Samochod</span>, a
+                      następnie zamień kilka liter na znaki specjalne oraz
+                      cyfry, np.
+                      <span
+                        class="font-mono text-rose-400 bg-white/5 px-1 rounded"
+                        >S@moch*d34</span
+                      >
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+
+            <div class="relative">
+              <Input
+                v-model="password"
+                :type="isPasswordVisible ? 'text' : 'password'"
+                placeholder="Stwórz hasło"
+                class="h-10 pr-10"
+              />
+              <button
+                type="button"
+                @click="isPasswordVisible = !isPasswordVisible"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-rose-500 transition-colors"
               >
-                {{ password.length >= 8 ? "✓" : "•" }} Minimum 8 znaków
-              </li>
-              <li
-                :class="
-                  /[a-z]/.test(password) && /[A-Z]/.test(password)
-                    ? 'font-medium text-green-500'
-                    : 'text-muted-foreground'
-                "
-              >
-                {{
-                  /[a-z]/.test(password) && /[A-Z]/.test(password) ? "✓" : "•"
-                }}
-                Małe i wielkie litery
-              </li>
-              <li
-                :class="
-                  /\d/.test(password)
-                    ? 'font-medium text-green-500'
-                    : 'text-muted-foreground'
-                "
-              >
-                {{ /\d/.test(password) ? "✓" : "•" }} Przynajmniej jedna cyfra
-              </li>
-              <li
-                :class="
-                  /[!@#$%^&*(),.?&quot;:{}|<>]/.test(password)
-                    ? 'font-medium text-green-500'
-                    : 'text-muted-foreground'
-                "
-              >
-                {{ /[!@#$%^&*(),.?&quot;:{}|<>]/.test(password) ? "✓" : "•" }}
-                Znak specjalny (np. !, @, #, $)
-              </li>
-            </ul>
+                <component :is="isPasswordVisible ? EyeOff : Eye" :size="16" />
+              </button>
+            </div>
+
+            <ul class="mt-2 ml-1 space-y-1 text-[11px] transition-all"></ul>
           </div>
 
+          <!-- Confirm Password -->
+
           <div class="w-full text-left">
-            <Input
-              v-model="confirmPass"
-              type="password"
-              placeholder="Powtórz hasło"
-              class="h-10"
-            />
+            <label class="mb-1 ml-1 block text-[11px] text-gray-400"
+              >Potwierdź hasło</label
+            >
+            <div class="relative">
+              <Input
+                v-model="confirmPass"
+                :type="isConfirmVisible ? 'text' : 'password'"
+                placeholder="Powtórz hasło"
+                class="h-10 pr-10"
+              />
+              <button
+                type="button"
+                @click="isConfirmVisible = !isConfirmVisible"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-rose-500 transition-colors"
+              >
+                <component :is="isConfirmVisible ? EyeOff : Eye" :size="16" />
+              </button>
+            </div>
+
             <p
               v-if="confirmPass && password !== confirmPass"
               class="mt-1 ml-1 animate-pulse text-[11px] text-red-500"
@@ -353,6 +471,54 @@ const verifyOtp = async () => {
             </p>
           </div>
 
+          <!-- Age & City -->
+
+          <div class="text-left w-full">
+            <label class="mb-1 ml-1 block text-[11px] text-gray-400"
+              >Miejscowość</label
+            >
+            <Input
+              v-model="city"
+              type="text"
+              placeholder="Wpisz miejscowość"
+              class="h-10"
+              :class="
+                city && !isCityValid ? 'border-red-500 focus:ring-red-500' : ''
+              "
+            />
+
+            <p
+              v-if="city && !isCityValid"
+              class="mt-1 ml-1 text-[11px] text-red-500"
+            >
+              Nazwa miasta może zawierać tylko litery i spacje.
+            </p>
+          </div>
+
+          <div class="text-left w-full">
+            <label class="mb-1 ml-1 block text-[11px] text-gray-400"
+              >Data urodzenia</label
+            >
+            <Input
+              v-model="birth_date"
+              type="date"
+              class="h-10"
+              :class="
+                birth_date && !isAdult
+                  ? 'border-red-500 focus:ring-red-500'
+                  : ''
+              "
+            />
+
+            <p
+              v-if="birth_date && !isAdult"
+              class="mt-1 ml-1 text-[11px] text-red-500 animate-pulse"
+            >
+              Musisz mieć ukończone 18 lat, aby dołączyć.
+            </p>
+          </div>
+
+          <!-- Sex Radio Buttons -->
           <div class="w-full text-left">
             <span class="mb-2 ml-1 block text-xs font-medium text-gray-400">
               Płeć
@@ -409,6 +575,8 @@ const verifyOtp = async () => {
       </div>
     </div>
 
+    <!-- VERIFICATION CODE -->
+
     <div
       v-else-if="currentStep === 'otp'"
       key="otp"
@@ -418,7 +586,7 @@ const verifyOtp = async () => {
         Weryfikacja
       </h2>
       <p class="text-muted-foreground mx-auto mb-10 max-w-[600px] text-xl">
-        Wysłaliśmy 8-cyfrowy kod na adres <br />
+        Wysłaliśmy kod na adres <br />
         <span class="text-primary font-bold">{{ email }}</span>
       </p>
 
@@ -439,12 +607,31 @@ const verifyOtp = async () => {
           {{ isLoading ? "Weryfikacja..." : "Potwierdź kod" }}
         </Button>
 
-        <button
-          @click="currentStep = 'register'"
-          class="text-muted-foreground text-sm hover:underline"
-        >
-          Wróć do poprawy danych
-        </button>
+        <div class="flex flex-col items-center gap-2">
+          <button
+            @click="resendOtp"
+            :disabled="cooldownSeconds > 0 || isLoading"
+            class="text-sm transition-colors"
+            :class="
+              cooldownSeconds > 0
+                ? 'text-gray-500 cursor-not-allowed'
+                : 'text-rose-500 hover:text-rose-400 font-semibold underline decoration-dotted'
+            "
+          >
+            {{
+              cooldownSeconds > 0
+                ? `Wyślij ponownie za ${formattedCooldown}`
+                : "Nie otrzymałeś kodu? Wyślij ponownie"
+            }}
+          </button>
+
+          <button
+            @click="currentStep = 'register'"
+            class="text-muted-foreground text-xs hover:underline opacity-70"
+          >
+            Wróć do poprawy danych
+          </button>
+        </div>
       </div>
     </div>
   </Transition>
