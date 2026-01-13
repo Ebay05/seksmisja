@@ -27,7 +27,7 @@ const handleLogin = async () => {
     const { data, error } = await supabase
       .from("profiles") // Make sure you have a profiles table or use your metadata logic
       .select("email")
-      .eq("display_name", identifier.value)
+      .eq("username", identifier.value)
       .single();
 
     if (error || !data) {
@@ -49,7 +49,7 @@ const handleLogin = async () => {
     isLoading.value = false;
   } else {
     // Redirect to the private app area after successful login
-    router.push("/app/news");
+    router.push("/app");
   }
 };
 </script>

@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Homepage from '../public/Homepage.vue'
-import { supabase } from '@/lib/supabaseClient' // Import supabase to check auth status
+import { supabase } from '@/lib/supabaseClient'
+import AppFrame from './components/AppFrame.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -21,30 +22,34 @@ const router = createRouter({
 
     // PRIVATE ROUTES (Protected by Guard)
     {
-      path: '/app/news',
-      name: 'news',
-      component: () => import('./components/News.vue'), // Ensure this component exists
+      path: '/app',
+      component: AppFrame,
       meta: { requiresAuth: true },
+      redirect: '/app/community',
+      children: [
+        { path: 'community', component: () => import('@/components/views/Community.vue') },
+        { path: 'chat', component: () => import('@/components/views/Chat.vue') },
+        { path: 'likes', component: () => import('@/components/views/Likes.vue') },
+        { path: 'forum', component: () => import('@/components/views/Forum.vue') },
+        { path: 'premium', component: () => import('@/components/views/Premium.vue') },
+      ],
     },
   ],
 })
 
 // NAVIGATION GUARD
 router.beforeEach(async (to, _from, next) => {
-  // Get current session from Supabase
   const {
     data: { session },
   } = await supabase.auth.getSession()
 
-  // Check if route requires authentication
-  if (to.meta.requiresAuth && !session) {
-    // Redirect to login if not authenticated
+  const isAuthRequired = to.matched.some((record) => record.meta.requiresAuth)
+
+  if (isAuthRequired && !session) {
     next({ name: 'login' })
   } else if (to.name === 'login' && session) {
-    // Redirect to private app if already logged in and trying to access login page
-    next({ name: 'news' })
+    next({ name: 'community' })
   } else {
-    // Proceed as normal
     next()
   }
 })

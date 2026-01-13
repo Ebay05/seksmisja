@@ -65,7 +65,7 @@ const submitToSupabase = async () => {
     password: password.value,
     options: {
       data: {
-        display_name: username.value,
+        username: username.value,
       },
     },
   });
