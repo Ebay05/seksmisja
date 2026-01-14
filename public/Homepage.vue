@@ -11,9 +11,6 @@ import {
 } from "@/components/ui/tooltip";
 import { Info, Eye, EyeOff } from "lucide-vue-next";
 
-import maleAvatar from "https://ncpbptkitgswsudanyfj.supabase.co/storage/v1/object/public/avatars/default_male_avatar.jpg";
-import femaleAvatar from "https://ncpbptkitgswsudanyfj.supabase.co/storage/v1/object/public/avatars/default_female_avatar.jpg";
-
 const isRegisterVisible = ref(false);
 const currentStep = ref("home");
 

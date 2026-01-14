@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent } from '@/components/ui/card'
-import { ref, onMounted, DefineComponent } from 'vue'
+import { ref, onMounted } from 'vue'
 import { supabase } from '@/lib/supabaseClient'
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 
