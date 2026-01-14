@@ -1,17 +1,5 @@
-<script lang="ts">
+<script setup lang="ts">
 import { Volume2, Settings, MessageCircleMore, MailPlus, Trash2, Plus } from 'lucide-vue-next'
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  components: {
-    Volume2,
-    Settings,
-    MessageCircleMore,
-    MailPlus,
-    Trash2,
-    Plus,
-  },
-})
 </script>
 <template>
   <div class="flex h-full w-full overflow-hidden">

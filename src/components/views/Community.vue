@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-
 import { Card, CardContent } from '@/components/ui/card'
-
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, DefineComponent } from 'vue'
 import { supabase } from '@/lib/supabaseClient'
-
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 
 const userProfile = ref<{
@@ -31,7 +28,7 @@ const fetchProfile = async () => {
   }
 }
 
-import { ImagePlus, Video, SmilePlus } from 'lucide-vue-next'
+import { ImagePlus, Video, SmilePlus, Send } from 'lucide-vue-next'
 
 const actions = [
   { title: 'Dodaj zdjęcie', icon: ImagePlus, type: 'image' },
@@ -80,7 +77,7 @@ onMounted(() => {
 
                 <!-- Send Icon -->
                 <button
-                  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rose-500 text-white shadow-lg transition-all hover:scale-105 hover:bg-rose-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-rose-800 bg-rose-950 text-rose-600 shadow-lg transition-all hover:scale-105 hover:border hover:border-rose-800 hover:bg-rose-800 hover:text-white active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
                   title="Opublikuj"
                 >
                   <Send :size="18" />
