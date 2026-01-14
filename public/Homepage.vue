@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/tooltip";
 import { Info, Eye, EyeOff } from "lucide-vue-next";
 
-import maleAvatar from "@/assets/default_male_avatar.jpg";
-import femaleAvatar from "@/assets/default_female_avatar.jpg";
+import maleAvatar from "https://ncpbptkitgswsudanyfj.supabase.co/storage/v1/object/public/avatars/default_male_avatar.jpg";
+import femaleAvatar from "https://ncpbptkitgswsudanyfj.supabase.co/storage/v1/object/public/avatars/default_female_avatar.jpg";
 
 const isRegisterVisible = ref(false);
 const currentStep = ref("home");
@@ -42,9 +42,9 @@ const handleRegister = () => {
 // FETCHING AVATAR URL
 const getAvatarUrl = () => {
   if (sex.value === "K") {
-    return femaleAvatar;
+    return "/avatars/default_female_avatar.jpg";
   }
-  return maleAvatar;
+  return "/avatars/default_male_avatar.jpg";
 };
 
 // ADULT VALIDATION
