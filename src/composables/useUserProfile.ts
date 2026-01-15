@@ -88,9 +88,14 @@ export function useUserProfile() {
   onBeforeMount(async () => {
     await loadProfile()
 
-    authListener = supabase.auth.onAuthStateChange(async () => {
+    // Supabase v2 returns: { data: { subscription } }
+    const { data } = supabase.auth.onAuthStateChange(async () => {
       await loadProfile()
-    }).data
+    })
+
+    authListener = {
+      unsubscribe: () => data.subscription.unsubscribe(),
+    }
   })
 
   onUnmounted(() => {

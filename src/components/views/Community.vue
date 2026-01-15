@@ -4,8 +4,7 @@ import { useCommunity } from '@/composables/useCommunity'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardFooter } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 
 import { ImagePlus, Video, SmilePlus, Send } from 'lucide-vue-next'
 
@@ -51,7 +50,7 @@ onMounted(() => {
 
   observer = new IntersectionObserver(
     (entries) => {
-      if (entries[0].isIntersecting && hasMore.value && !loadingMore.value) {
+      if (entries[0]?.isIntersecting && hasMore.value && !loadingMore.value) {
         fetchNewbiesPage()
       }
     },

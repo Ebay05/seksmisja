@@ -1,4 +1,4 @@
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { supabase } from '@/lib/supabaseClient'
 
 export function useCommunity() {

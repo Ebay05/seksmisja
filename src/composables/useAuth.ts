@@ -12,7 +12,9 @@ const authError = ref<AuthError | null>(null)
 let authListener: { unsubscribe: () => void } | null = null
 
 export function useAuth() {
-  // Load current session
+  /* -----------------------------------------------------
+     LOAD CURRENT SESSION
+  ----------------------------------------------------- */
   const loadSession = async () => {
     loading.value = true
     authError.value = null
@@ -32,7 +34,9 @@ export function useAuth() {
     loading.value = false
   }
 
-  // Login
+  /* -----------------------------------------------------
+     LOGIN
+  ----------------------------------------------------- */
   const login = async (email: string, password: string) => {
     authError.value = null
 
@@ -50,7 +54,9 @@ export function useAuth() {
     return data.session
   }
 
-  // Register
+  /* -----------------------------------------------------
+     REGISTER
+  ----------------------------------------------------- */
   const register = async (email: string, password: string) => {
     authError.value = null
 
@@ -67,7 +73,9 @@ export function useAuth() {
     return data.user
   }
 
-  // Logout
+  /* -----------------------------------------------------
+     LOGOUT
+  ----------------------------------------------------- */
   const logout = async () => {
     authError.value = null
 
@@ -81,17 +89,25 @@ export function useAuth() {
     session.value = null
   }
 
-  // Init
+  /* -----------------------------------------------------
+     INIT — LISTEN FOR AUTH CHANGES
+  ----------------------------------------------------- */
   onBeforeMount(async () => {
     await loadSession()
 
-    // Listen for auth changes
-    authListener = supabase.auth.onAuthStateChange(async () => {
+    const { data } = supabase.auth.onAuthStateChange(async () => {
       await loadSession()
-    }).data
+    })
+
+    // Supabase v2 returns: { subscription }
+    authListener = {
+      unsubscribe: () => data.subscription.unsubscribe(),
+    }
   })
 
-  // Cleanup
+  /* -----------------------------------------------------
+     CLEANUP
+  ----------------------------------------------------- */
   onUnmounted(() => {
     if (authListener) {
       authListener.unsubscribe()
