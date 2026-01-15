@@ -13,67 +13,28 @@ import {
   SidebarProvider,
 } from '@/components/ui/sidebar'
 
-import { Button } from '@/components/ui/button' // DODANO IMPORT
+import { Button } from '@/components/ui/button'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
-import { MessageCircleMore, HeartPlus, Library, Gem, Users, LogOut } from 'lucide-vue-next'
-import { ref, onMounted } from 'vue'
-import { supabase } from '@/lib/supabaseClient'
-import { useRouter, useRoute } from 'vue-router'
+import { LogOut } from 'lucide-vue-next'
 
-const router = useRouter()
+import { useRoute, RouterLink, RouterView } from 'vue-router'
+import { sidebarItems } from '@/config/sidebarItems'
+import { useUserProfile } from '@/composables/useUserProfile'
+import { useAuth } from '@/composables/useAuth'
+
 const route = useRoute()
+const { userProfile } = useUserProfile()
+const { logout } = useAuth()
 
-// Sidebar Sections
-const items = [
-  { title: 'Społeczność', path: '/app/community', icon: Users },
-  { title: 'Czat', path: '/app/chat', icon: MessageCircleMore },
-  { title: 'Polubienia', path: '/app/likes', icon: HeartPlus },
-  { title: 'Forum', path: '/app/forum', icon: Library },
-  { title: 'Premium', path: '/app/premium', icon: Gem },
-]
-
-const userProfile = ref<{
-  username: string
-  email: string
-  sex: string
-  avatar_url: string
-  role: string
-} | null>(null)
-
-const handleLogout = async () => {
-  await supabase.auth.signOut()
-  router.push('/logowanie')
-}
-
-onMounted(async () => {
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
-
-  if (session?.user) {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('username, email, sex, avatar_url, role')
-      .eq('id', session.user.id)
-      .single()
-
-    if (error) {
-      console.error('Błąd pobierania profilu:', error.message)
-      return
-    }
-
-    userProfile.value = data
-    console.log('Pobrano profil:', data)
-  } else {
-  }
-})
+// Helper: active route detection
+const isActive = (path: string) => route.path.startsWith(path)
 </script>
 
 <template>
   <SidebarProvider>
     <Sidebar>
       <!-- ----------------------------------------------------- -->
-      <!-- ---------------------SIDEBAR MAIN-------------------- -->
+      <!-- --------------------- SIDEBAR MAIN ------------------ -->
       <!-- ----------------------------------------------------- -->
       <SidebarContent>
         <SidebarGroup>
@@ -82,26 +43,27 @@ onMounted(async () => {
               <img src="/src/assets/seksmisja-logo-main.svg" alt="Logo Seksmisja" class="h-10" />
             </RouterLink>
           </SidebarGroupLabel>
-          <!-- ----------------------------------------------------- -->
-          <!-- ---------------------ICONS--------------------------- -->
-          <!-- ----------------------------------------------------- -->
+
+          <!-- --------------------- MENU ------------------------ -->
           <SidebarGroupContent>
             <SidebarMenu class="gap-2">
-              <SidebarMenuItem v-for="item in items" :key="item.title">
-                <router-link :to="item.path">
+              <SidebarMenuItem v-for="item in sidebarItems" :key="item.title">
+                <RouterLink :to="item.path">
                   <Button
                     variant="ghost"
                     :class="[
                       'h-11 w-full justify-start gap-4 rounded-lg px-4 transition-all',
-                      route.path === item.path
+                      isActive(item.path)
                         ? 'bg-rose-900/50 text-rose-500'
                         : 'text-gray-400 hover:bg-rose-600 hover:text-white',
                     ]"
                   >
                     <component :is="item.icon" :size="24" />
-                    <span class="text-base font-medium">{{ item.title }}</span>
+                    <span class="text-base font-medium">
+                      {{ item.title }}
+                    </span>
                   </Button>
-                </router-link>
+                </RouterLink>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
@@ -109,7 +71,7 @@ onMounted(async () => {
       </SidebarContent>
 
       <!-- ----------------------------------------------------- -->
-      <!-- ---------------------FOOTER------------------------- -->
+      <!-- --------------------- FOOTER ------------------------ -->
       <!-- ----------------------------------------------------- -->
       <SidebarFooter class="p-4">
         <SidebarMenu>
@@ -138,7 +100,7 @@ onMounted(async () => {
             </div>
 
             <SidebarMenuButton
-              @click="handleLogout"
+              @click="logout"
               class="mt-2 text-rose-500 hover:bg-rose-50 hover:text-rose-600"
             >
               <LogOut class="h-4 w-4" />
@@ -148,8 +110,9 @@ onMounted(async () => {
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
+
     <!-- ----------------------------------------------------- -->
-    <!-- ---------------------CONTENT------------------------- -->
+    <!-- --------------------- CONTENT ------------------------ -->
     <!-- ----------------------------------------------------- -->
     <SidebarInset>
       <main class="h-full flex-1 overflow-y-auto">

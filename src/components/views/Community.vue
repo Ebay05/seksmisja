@@ -1,14 +1,40 @@
 <script setup lang="ts">
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Card, CardContent } from '@/components/ui/card'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { supabase } from '@/lib/supabaseClient'
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
+
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 
 const userProfile = ref<{
   avatar_url: string
   username: string
+  birth_date: string | Date
+  city: string
 } | null>(null)
+
+const userAge = computed(() => {
+  if (!userProfile.value?.birth_date) return null
+
+  const birth = new Date(userProfile.value.birth_date)
+  const today = new Date()
+  let age = today.getFullYear() - birth.getFullYear()
+  const m = today.getMonth() - birth.getMonth()
+
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+    age--
+  }
+  return age
+})
 
 const fetchProfile = async () => {
   const {
@@ -35,6 +61,42 @@ const actions = [
   { title: 'Dodaj wideo', icon: Video, type: 'video' },
   { title: 'Dodaj emoji', icon: SmilePlus, type: 'emoji' },
 ]
+
+const allNewbies = ref<any[]>([]) // Pełna lista 50 osób
+const displayLimit = ref(12) // Ile osób pokazujemy na start
+
+const fetchNewbies = async () => {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id, username, avatar_url, birth_date, city, created_at')
+    .order('created_at', { ascending: false })
+    .limit(50)
+
+  if (!error) {
+    allNewbies.value = data
+  }
+}
+
+// Funkcja pomocnicza do wieku dla każdego użytkownika z listy
+const calculateAge = (date: string) => {
+  if (!date) return ''
+  const birth = new Date(date)
+  const today = new Date()
+  let age = today.getFullYear() - birth.getFullYear()
+  if (
+    today.getMonth() < birth.getMonth() ||
+    (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())
+  ) {
+    age--
+  }
+  return age
+}
+
+// Wywołaj w onMounted
+onMounted(() => {
+  fetchProfile()
+  fetchNewbies() // Dodaj to
+})
 
 onMounted(() => {
   fetchProfile()
@@ -98,24 +160,72 @@ onMounted(() => {
             </Card>
           </div>
         </TabsContent>
-        <TabsContent value="live">
+        <TabsContent value="live" class="mt-0 w-3/4">
           <h2 class="text-2xl font-bold text-white">Kamerki</h2>
         </TabsContent>
 
-        <TabsContent value="searcher">
+        <TabsContent value="searcher" class="mt-0 w-3/4">
           <h2 class="text-2xl font-bold text-white">Wyszukiwarka</h2>
         </TabsContent>
 
-        <TabsContent value="listings">
+        <TabsContent value="listings" class="mt-0 w-3/4">
           <h2 class="text-2xl font-bold text-white">Ogłoszenia</h2>
         </TabsContent>
 
-        <TabsContent value="viewers">
+        <TabsContent value="viewers" class="mt-0 w-3/4">
           <h2 class="text-2xl font-bold text-white">Obserwujący</h2>
         </TabsContent>
 
-        <TabsContent value="newbies">
-          <h2 class="text-2xl font-bold text-white">Nowi</h2>
+        <TabsContent value="newbies" class="mt-0 w-full lg:w-3/4">
+          <div class="mb-6 flex items-center justify-between">
+            <h2 class="text-2xl font-bold text-white">Nowi użytkownicy</h2>
+            <span class="text-xs text-gray-500">Ostatnie 50 osób</span>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <Card
+              v-for="user in allNewbies.slice(0, displayLimit)"
+              :key="user.id"
+              class="group border-white/5 bg-zinc-900/50 transition-all hover:border-rose-500/30 hover:bg-zinc-800/50"
+            >
+              <CardContent class="flex flex-col items-center p-4 text-center">
+                <Avatar
+                  class="h-20 w-20 border-2 border-rose-500/20 shadow-xl transition-transform group-hover:scale-105"
+                >
+                  <AvatarImage :src="user.avatar_url" alt="Avatar" />
+                </Avatar>
+
+                <div class="mt-4">
+                  <h3 class="leading-tight font-bold text-white">
+                    {{ user.username }}
+                  </h3>
+                  <p class="text-xs text-gray-400">
+                    {{ calculateAge(user.birth_date) }} lat, {{ user.city }}
+                  </p>
+                </div>
+              </CardContent>
+
+              <CardFooter class="flex justify-center p-3 pt-0">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  class="h-8 w-full text-[11px] text-rose-500 hover:bg-rose-500 hover:text-white"
+                >
+                  Zobacz profil
+                </Button>
+              </CardFooter>
+            </Card>
+          </div>
+
+          <div v-if="displayLimit < allNewbies.length" class="mt-10 flex justify-center pb-10">
+            <Button
+              @click="displayLimit += 12"
+              variant="outline"
+              class="border-rose-900 bg-rose-950/20 text-rose-500 hover:bg-rose-500 hover:text-white"
+            >
+              Pokaż więcej osób
+            </Button>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
