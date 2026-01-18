@@ -4,9 +4,10 @@ import { useCommunity } from '@/composables/useCommunity'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
-import { Card, CardContent } from '@/components/ui/card'
 
 import { ImagePlus, Video, SmilePlus, Send } from 'lucide-vue-next'
+
+import UserCard from '../UserCard.vue'
 
 /* -----------------------------------------------------
    COMMUNITY COMPOSABLE
@@ -142,7 +143,6 @@ onBeforeUnmount(() => {
         <TabsContent value="newbies" class="mt-0 w-full lg:w-3/4">
           <div class="mb-6 flex items-center justify-between">
             <h2 class="text-2xl font-bold text-white">Nowi użytkownicy</h2>
-            <span class="text-xs text-gray-500">Ładowanie dynamiczne</span>
           </div>
 
           <!-- SKELETON GRID -->
@@ -163,35 +163,7 @@ onBeforeUnmount(() => {
 
           <!-- USERS GRID -->
           <div v-else class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            <Card
-              v-for="user in newbies"
-              :key="user.id"
-              class="group animate-fade-in border-white/5 bg-zinc-900/50 transition-all hover:border-rose-500/30 hover:bg-zinc-800/50 hover:shadow-xl hover:shadow-rose-900/10"
-            >
-              <CardContent class="flex flex-col items-center p-4 text-center">
-                <Avatar
-                  class="h-20 w-20 border-2 border-rose-500/20 shadow-xl transition-transform group-hover:scale-105"
-                >
-                  <AvatarImage
-                    :src="user.avatar_url || ''"
-                    loading="lazy"
-                    decoding="async"
-                    fetchpriority="low"
-                  />
-                  <AvatarFallback>
-                    {{ user.username.charAt(0) }}
-                  </AvatarFallback>
-                </Avatar>
-
-                <div class="mt-4">
-                  <h3 class="font-bold text-white">{{ user.username }}</h3>
-                  <p class="text-xs text-gray-400">
-                    {{ calculateAge(user.birth_date) || '?' }} lat,
-                    {{ user.city || '?' }}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            <UserCard v-for="user in newbies" :key="user.id" :user="user" />
           </div>
 
           <!-- INFINITE SCROLL OBSERVER -->
