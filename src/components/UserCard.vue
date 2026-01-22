@@ -1,16 +1,26 @@
 <script setup lang="ts">
 import { Card, CardContent } from '@/components/ui/card'
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { useCommunity } from '@/composables/useCommunity'
+import { computed } from 'vue'
 
 const props = defineProps<{
   user: {
     id: string
     username: string
+    sex: string
     avatar_url: string | null
     birth_date: string | null
     city: string | null
   }
 }>()
+
+const avatarSrc = computed(() => {
+  if (props.user.avatar_url) return props.user.avatar_url
+  if (props.user.sex === 'female') return 'avatars/default_female_avatar.jpg'
+  if (props.user.sex === 'male') return 'avatars/default_male_avatar.jpg'
+  return 'avatars/default_neutral_avatar.jpg'
+})
 
 const { calculateAge } = useCommunity()
 </script>
@@ -24,7 +34,7 @@ const { calculateAge } = useCommunity()
         <Avatar
           class="h-20 w-20 border-2 border-rose-500/20 shadow-xl transition-transform group-hover:scale-105"
         >
-          <AvatarImage :src="user.avatar_url || ''" />
+          <AvatarImage :src="avatarSrc" />
           <AvatarFallback>{{ user.username.charAt(0) }}</AvatarFallback>
         </Avatar>
 

@@ -52,6 +52,11 @@ const router = createRouter({
           name: 'premium', // DODAJ TO
           component: () => import('@/components/views/Premium.vue'),
         },
+        {
+          path: '/user/:username',
+          name: 'user-profile',
+          component: () => import('@/pages/user/UserProfilePage.vue'),
+        },
       ],
     },
   ],

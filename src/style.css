@@ -4,7 +4,7 @@
 
 :root {
   /* CZCIONKA */
-  --font-sans: 'Questrial', 'Poppins', Helvetica, sans-serif;
+  --font-sans: 'Poppins', Helvetica, sans-serif;
 
   /* ZMIENNE KOLORÓW (Light Mode) */
   --background: oklch(1 0 0);
@@ -44,6 +44,10 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.552 0.016 285.938);
+}
+
+.poppins {
+  font-family: 'Poppins', Arial, Helvetica, sans-serif;
 }
 
 @theme inline {
@@ -102,7 +106,7 @@ a {
   * {
     @apply border-border outline-ring/50;
     /* To wymusi czcionkę na KAŻDYM elemencie, jeśli nic innego nie działa */
-    font-family: 'Questrial', 'Poppins', Arial, Helvetica, sans-serif !important;
+    font-family: 'Poppins', Arial, Helvetica, sans-serif !important;
   }
 
   body {

@@ -1,4 +1,4 @@
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { supabase } from '@/lib/supabaseClient'
 
 export function useCommunity() {
@@ -17,25 +17,28 @@ export function useCommunity() {
   const loadingProfile = ref(true)
 
   /* -----------------------------------------------------
-     AGE CALCULATION
+     AGE CALCULATION (shared helper)
   ----------------------------------------------------- */
   const calculateAge = (date: string | null) => {
     if (!date) return null
+
     const birth = new Date(date)
+    if (isNaN(birth.getTime())) return null
+
     const today = new Date()
     let age = today.getFullYear() - birth.getFullYear()
 
-    if (
+    const beforeBirthday =
       today.getMonth() < birth.getMonth() ||
       (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())
-    ) {
-      age--
-    }
+
+    if (beforeBirthday) age--
+
     return age
   }
 
   /* -----------------------------------------------------
-     FETCH PAGE (INFINITE SCROLL)
+     FETCH COMMUNITY USERS (INFINITE SCROLL)
   ----------------------------------------------------- */
   const fetchNewbiesPage = async () => {
     if (!hasMore.value) return
@@ -52,19 +55,18 @@ export function useCommunity() {
       .from('profiles')
       .select('id, username, avatar_url, birth_date, city, created_at')
       .order('created_at', { ascending: false })
-      .order('id', { ascending: false }) // ⭐ stabilne sortowanie
+      .order('id', { ascending: false }) // stabilne sortowanie
       .range(from, to)
 
-    if (!error && data.length > 0) {
-      // ⭐ usuń zalogowanego użytkownika
+    if (!error && data && data.length > 0) {
+      // usuń zalogowanego użytkownika
       const filtered = data.filter((u) => u.id !== currentUserId)
 
-      // ⭐ połącz stare + nowe i usuń duplikaty
+      // połącz stare + nowe i usuń duplikaty
       const unique = new Map()
       ;[...newbies.value, ...filtered].forEach((u) => unique.set(u.id, u))
 
       newbies.value = Array.from(unique.values())
-
       page.value++
     } else {
       hasMore.value = false
@@ -74,6 +76,9 @@ export function useCommunity() {
     loadingNewbies.value = false
   }
 
+  /* -----------------------------------------------------
+     FETCH LOGGED-IN USER PROFILE
+  ----------------------------------------------------- */
   const fetchProfile = async () => {
     loadingProfile.value = true
 
@@ -90,7 +95,7 @@ export function useCommunity() {
       .eq('id', user.id)
       .single()
 
-    if (!error) {
+    if (!error && data) {
       userProfile.value = data
     }
 
@@ -109,9 +114,12 @@ export function useCommunity() {
     loadingNewbies,
     loadingMore,
     hasMore,
+
     calculateAge,
+
     fetchNewbiesPage,
     fetchProfile,
+
     userProfile,
     loadingProfile,
   }
