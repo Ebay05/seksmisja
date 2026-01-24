@@ -14,7 +14,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 const route = useRoute()
 const username = route.params.username as string
 
-const { user, age, loading, error, load } = useFullUser()
+const { user, age, loading, error, notFound, load } = useFullUser()
 load(username)
 console.log(user)
 </script>
@@ -35,9 +35,7 @@ console.log(user)
             class="object-cover"
           />
 
-          <AvatarFallback>
-            {{ user.username.charAt(0).toUpperCase() }}
-          </AvatarFallback>
+          <AvatarFallback> {{ user?.username?.charAt(0)?.toUpperCase() || '?' }} </AvatarFallback>
         </Avatar>
 
         <UserProfileBasicInfo v-if="user" />
@@ -54,9 +52,9 @@ console.log(user)
         <UserProfileDescription v-if="user" :description="user.description" />
       </div>
 
-      <!-- <div v-if="loading">Ładowanie profilu...</div>
-    <div v-if="!loading && notFound">Taki użytkownik nie istnieje.</div>
-    <div v-if="!loading && error">{{ error }}</div> -->
+      <div v-if="loading">Ładowanie profilu...</div>
+      <div v-if="!loading && notFound">Taki użytkownik nie istnieje.</div>
+      <div v-if="!loading && error">{{ error }}</div>
     </div>
   </div>
 </template>

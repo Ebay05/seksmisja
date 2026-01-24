@@ -1,6 +1,10 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { Card, CardContent } from '@/components/ui/card'
 import { VenusAndMars, Ruler, Heart, Languages, User, Circle } from 'lucide-vue-next'
+import { useFullUser } from '@/composables/useFullUser'
+
+const { user } = useFullUser()
 
 const SearchCities = [
   {
@@ -17,32 +21,32 @@ const SearchCities = [
   },
 ]
 
-const BasicInfo = [
+const BasicInfo = computed(() => [
   {
     icon: VenusAndMars,
-    text: 'Kobieta',
+    text: user.value?.sex || 'Błąd',
   },
   {
     icon: Ruler,
-    text: '158 cm',
+    text: user.value?.height || 'Błąd',
   },
   {
     icon: Circle,
-    text: 'Średniej budowy',
+    text: user.value?.body_type || 'Błąd',
   },
   {
     icon: Heart,
-    text: 'Hetero',
+    text: user.value?.sexual_preferences || 'Błąd',
   },
   {
     icon: Languages,
-    text: 'Polski, Angielski',
+    text: user.value?.languages || 'Błąd',
   },
   {
-    icon: User,
-    text: 'Singielka',
+    icon: user,
+    text: user.value?.status || 'Błąd',
   },
-]
+])
 </script>
 
 <template>
