@@ -78,7 +78,7 @@ onBeforeUnmount(() => {
 <template>
   <div class="flex h-full w-full overflow-hidden">
     <!-- MAIN CONTENT -->
-    <div class="flex w-full flex-1 flex-col items-center overflow-y-auto p-8">
+    <div class="flex w-full flex-1 flex-col items-center overflow-y-auto">
       <Tabs default-value="news" class="flex w-3/4 flex-col items-center">
         <TabsList class="mb-6">
           <TabsTrigger value="news">Aktualności</TabsTrigger>
@@ -188,7 +188,7 @@ onBeforeUnmount(() => {
 
     <!-- SIDEBAR -->
     <div class="hidden h-full w-80 p-8 lg:block">
-      <div class="h-full rounded-3xl border border-white/20 p-6">
+      <div class="h-full rounded-3xl border border-white/20 bg-zinc-800/20 p-6">
         <h2 class="mb-4 text-lg font-semibold text-white">Kontakty</h2>
         <p class="text-sm text-gray-500 italic">Brak aktywnych kontaktów</p>
       </div>

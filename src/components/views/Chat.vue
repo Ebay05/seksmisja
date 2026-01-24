@@ -6,7 +6,7 @@ import { Volume2, Settings, MessageCircleMore, MailPlus, Trash2, Plus } from 'lu
     <!-- ----------------------------------------------------- -->
     <!-- ---------------------LEFT SIDEBAR-------------------- -->
     <!-- ----------------------------------------------------- -->
-    <div class="flex w-1/4 flex-col items-center overflow-y-auto p-8">
+    <div class="flex w-1/4 flex-col items-center overflow-y-auto">
       <div class="mb-3 flex w-full items-center justify-between">
         <!-- Title -->
         <h2 class="text-2xl font-bold text-white">Wiadomości</h2>
