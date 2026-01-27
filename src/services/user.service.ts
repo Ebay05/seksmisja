@@ -21,6 +21,7 @@ export async function getFullUser(username: string) {
       username,
       created_at,
       sex,
+      height,
       avatar_url,
       role,
       city,
