@@ -10,6 +10,7 @@ export interface FullUser {
   role: string | null
 
   description: string | null
+  height: number | null
   search_min_age: number | null
   body_type: string | null
   orientation: string | null
