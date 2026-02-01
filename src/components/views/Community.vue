@@ -9,6 +9,10 @@ import { ImagePlus, Video, SmilePlus, Send } from 'lucide-vue-next'
 
 import UserCard from '../UserCard.vue'
 
+import { useFriends } from '@/composables/useFriends'
+
+const { friends, loadingFriends, loadFriends } = useFriends()
+
 /* -----------------------------------------------------
    COMMUNITY COMPOSABLE
 ----------------------------------------------------- */
@@ -48,6 +52,7 @@ onMounted(() => {
   fetchProfile()
   fetchProfile()
   fetchNewbiesPage()
+  loadFriends()
 
   observer = new IntersectionObserver(
     (entries) => {
@@ -188,9 +193,25 @@ onBeforeUnmount(() => {
 
     <!-- SIDEBAR -->
     <div class="hidden h-full w-80 p-8 lg:block">
-      <div class="h-full rounded-3xl border border-white/20 p-6">
+      <div class="h-full rounded-3xl border border-white/10 bg-zinc-800/20 p-6">
         <h2 class="mb-4 text-lg font-semibold text-white">Kontakty</h2>
-        <p class="text-sm text-gray-500 italic">Brak aktywnych kontaktów</p>
+          <div v-if="loadingFriends">Ładowanie...</div>
+
+          <div v-else-if="friends.length===0">
+            <p>Brak znajomych</p>
+          </div>
+
+          <div v-else>
+            <div v-for="friend in friends" :key="friend.id" class="flex items-center gap-3">
+              <Avatar>
+                <AvatarImage :src="friend.avatar_url || ''" />
+                <AvatarFallback>{{ friend.username.charAt(0) }}</AvatarFallback>
+              </Avatar>
+              <span>{{ friend.username }}</span>
+            </div>
+          </div>
+
+
       </div>
     </div>
   </div>

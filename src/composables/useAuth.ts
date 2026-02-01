@@ -1,5 +1,5 @@
 import { ref, onBeforeMount, onUnmounted } from 'vue'
-import { supabase } from '@/lib/supabaseClient'
+import { supabase } from '@/lib/supabase'
 
 interface AuthError {
   message: string

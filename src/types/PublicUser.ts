@@ -4,6 +4,7 @@ export interface PublicUser {
   avatar_url: string | null
   birth_date: string | null
   sex: string | null
+  role: string | null
   city: string | null
   created_at: string
 }

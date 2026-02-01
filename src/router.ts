@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Homepage from '../public/Homepage.vue'
-import { supabase } from '@/lib/supabaseClient'
+import { supabase } from '@/lib/supabase'
 import AppFrame from './components/AppFrame.vue'
 
 const router = createRouter({

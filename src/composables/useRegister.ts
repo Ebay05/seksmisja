@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { supabase } from '@/lib/supabaseClient'
+import { supabase } from '@/lib/supabase'
 import { useRegisterValidation } from './useRegisterValidation'
 
 export function useRegister() {
