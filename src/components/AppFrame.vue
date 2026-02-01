@@ -39,7 +39,7 @@ const isActive = (path: string) => route.path.startsWith(path)
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel class="my-5 flex w-full justify-center p-4">
-            <RouterLink to="/app">
+            <RouterLink to="/app/community">
               <img src="/src/assets/seksmisja-logo-main.svg" alt="Logo Seksmisja" class="h-10" />
             </RouterLink>
           </SidebarGroupLabel>
@@ -118,7 +118,9 @@ const isActive = (path: string) => route.path.startsWith(path)
       <main class="h-full flex-1 overflow-y-auto">
         <RouterView v-slot="{ Component }">
           <transition name="fade" mode="out-in">
-            <component :is="Component" />
+            <div class="h-full w-full p-8">
+              <component :is="Component" />
+            </div>
           </transition>
         </RouterView>
       </main>
