@@ -83,10 +83,13 @@ export function useAuth() {
 
     if (error) {
       authError.value = { message: error.message }
-      return
+      return false
     }
 
+    // Clear local session and refresh to ensure other listeners update
     session.value = null
+    await loadSession()
+    return true
   }
 
   /* -----------------------------------------------------

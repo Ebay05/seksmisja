@@ -5,7 +5,6 @@ export interface SidebarItem {
   title: string
   path: string
   icon: Component
-  roles?: string[] // optional: restrict visibility by role
 }
 
 export const sidebarItems: SidebarItem[] = [
@@ -25,14 +24,8 @@ export const sidebarItems: SidebarItem[] = [
     icon: HeartPlus,
   },
   {
-    title: 'Forum',
-    path: '/app/forum',
-    icon: Library,
-  },
-  {
     title: 'Premium',
     path: '/app/premium',
     icon: Gem,
-    roles: ['premium', 'admin'], // optional
   },
 ]

@@ -8,8 +8,7 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
-    "public/Homepage.vue",
-    "public/Login.vue",
-    "public/Register.vue"
+    "pages/public/Homepage.vue",
+    "pages/public/Login.vue"
   ]
 }

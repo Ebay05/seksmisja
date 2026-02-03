@@ -26,7 +26,7 @@ const { calculateAge } = useCommunity()
 </script>
 
 <template>
-  <RouterLink :to="`/user/${user.username}`">
+  <RouterLink :to="{ name: 'user-profile', params: { username: user.username } }">
     <Card
       class="group animate-fade-in cursor-pointer border-white/5 bg-zinc-900/50 transition-all hover:border-rose-500/30 hover:bg-zinc-800/50 hover:shadow-xl hover:shadow-rose-900/10"
     >

@@ -91,7 +91,7 @@ export function useCommunity() {
 
     const { data, error } = await supabase
       .from('profiles')
-      .select('avatar_url, username, birth_date, city')
+      .select('id, avatar_url, username, birth_date, city, role')
       .eq('id', user.id)
       .single()
 

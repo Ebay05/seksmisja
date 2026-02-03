@@ -16,28 +16,38 @@ const errorMessage = ref<string | null>(null)
 let authListener: { unsubscribe: () => void } | null = null
 
 // --- SECURITY: Validate avatar URL ---
+// Accepts:
+// - absolute https URLs pointing to Supabase/CDN domains
+// - relative paths (e.g., 'avatars/...') served from public or storage
 const isValidAvatarUrl = (url: string | null | undefined): boolean => {
   if (!url) return false
 
-  try {
-    const parsed = new URL(url)
+  // If looks like URL (starts with http/https)
+  if (/^https?:\/\//i.test(url)) {
+    try {
+      const parsed = new URL(url)
 
-    // Block javascript:, data:, file:, blob: etc.
-    const forbiddenProtocols = ['javascript:', 'data:', 'file:']
-    if (forbiddenProtocols.includes(parsed.protocol)) return false
+      // Block javascript:, data:, file:, blob: etc.
+      const forbiddenProtocols = ['javascript:', 'data:', 'file:']
+      if (forbiddenProtocols.includes(parsed.protocol)) return false
 
-    // Allow only HTTPS
-    if (parsed.protocol !== 'https:') return false
+      // Allow only HTTPS
+      if (parsed.protocol !== 'https:') return false
 
-    // Allow only Supabase Storage domain (adjust to your project)
-    const allowedDomains = ['your-project-id.supabase.co', 'your-project-id.supabase.in']
+      // Allow supabase / cdn hostnames (more permissive)
+      const allowedHostPattern = /(supabase|supabase\.co|supabase\.in|supabase\.app|cdn)/i
+      if (!allowedHostPattern.test(parsed.hostname)) return false
 
-    if (!allowedDomains.includes(parsed.hostname)) return false
-
-    return true
-  } catch {
-    return false
+      return true
+    } catch {
+      return false
+    }
   }
+
+  // Relative paths (no protocol) are allowed (e.g., stored as 'avatars/..' or public files)
+  if (/^[a-z0-9_/.~-]+$/i.test(url)) return true
+
+  return false
 }
 
 export function useUserProfile() {
